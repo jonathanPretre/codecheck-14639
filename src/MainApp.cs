@@ -1,13 +1,52 @@
+﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Linq;
+using System.Net;
+using System.Text;
+using System.Threading.Tasks;
 
-public class MainApp
+namespace CallApi
 {
-    static public void Main (string[] args)
+    class Program
     {
-        for (int i = 0; i < args.Length; i++)
+        static void Main(string[] args)
         {
-           string output = String.Format("argv[{0}]: {0}", i, args[i]);
-           Console.WriteLine(output);
+
+            var page = new Uri("http://challenge-server.code-check.io/api/recursive/ask");
+            string jsonString;
+
+            using (WebClient client = new WebClient())
+            {
+                client.QueryString.Add("n", "4");
+                client.QueryString.Add("seed", "b0c2b89f-4862-4814-8728-ddb0b36076ba");
+                client.Encoding = Encoding.UTF8;
+                jsonString = client.DownloadString(page);
+            }
+
+            dynamic result = JsonConvert.DeserializeObject(jsonString);
+            Console.WriteLine(result.result);
+            Console.ReadKey();
+        }
+
+        public static async Task<string> DownloadInformation()
+        {
+            //NameValueCollection collection = new NameValueCollection();
+
+            //collection.Add("seed", "b0c2b89f-4862-4814-8728-ddb0b36076ba");
+            //collection.Add("n","3");
+
+            var page = new Uri("http://challenge-server.code-check.io/api/recursive/ask");
+
+            using (WebClient client = new WebClient())
+            {
+                client.QueryString.Add("n", "4");
+                client.QueryString.Add("seed", "b0c2b89f-4862-4814-8728-ddb0b36076ba");
+                client.Encoding = Encoding.UTF8;
+                return await client.DownloadStringTaskAsync(page);
+            }
+
         }
     }
 }
